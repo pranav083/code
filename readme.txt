@@ -9,6 +9,10 @@ Then, when I run “make” I get the rsort.riscv file. I run this file from my 
 
 make CONFIG=RocketConfig -j4 run-binary BINARY=~/project/code/rsort.riscv
 
+```bash
+########################################################################
+# CODE ....
+########################################################################
 
 CC := riscv64-unknown-elf-gcc
 OBJDUMP := riscv64-unknown-elf-objdump
@@ -16,23 +20,25 @@ OBJDUMP := riscv64-unknown-elf-objdump
 CFLAGS := -O2 -std=gnu11 -Wall -specs=htif_nano.specs
 
 
-.PHONY: rsort vvadd
-rsort: rsort.riscv
-vvadd: vvadd.riscv
+.PHONY: fft sha-256
+fft: fft.riscv
+sha-256: sha-256.riscv
 
 .PRECIOUS: %.riscv
 %.riscv: %.c trap.c
-        $(CC) $(CFLAGS) -DSIZE=16 -o $@ $< trap.c
+	$(CC) $(CFLAGS) -DSIZE=32 -o $@ $< trap.c 
+
+%.riscv: %.c trap.c
+	$(CC) $(CFLAGS) -DSIZE=32 -o $@ $< trap.c -lm
 
 #.dump: %.riscv
-#       $(OBJDUMP) -d -M no-aliases $< > $@
+#	$(OBJDUMP) -d -M no-aliases $< > $@
 
 .PHONY: clean
 clean:
-        rm -f -- *.riscv *.o *.dump
+	rm -f -- *.riscv *.o *.dump
 
 .SUFFIXES: # Disable built-in suffix rules
-
-
+```
 
 This is my edited Makefile - run “make rsort” or “make vvadd” - change for yourself
